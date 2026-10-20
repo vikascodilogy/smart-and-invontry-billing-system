@@ -24,6 +24,7 @@ class Products:
             """INSERT INTO products(name,discription,price,quantity)
             values(%s,%s,%s,%s)""" ,
             (name,discription,price,quantity),
+            
         )
         
         print(">>>>>>> Products Inserted!")
@@ -31,28 +32,54 @@ class Products:
         cur.close()
         
     @staticmethod
-    def update_product(product_id,name=None,discription=None,price=None,quantity=None):
-        cur=conn.cursor()
-        cur.execute("SELECT * FROM products where id= %s",(product_id))
+    # def update_product(product_id,name=None,discription=None,price=None,quantity=None):
+    #     cur=conn.cursor()
+    #     cur.execute("SELECT * FROM products where id= %s",(product_id,))
+    #     product = cur.fetchone()
+    #     if not product:
+    #         print(">>>>> Product Not Found!")
+    #         cur.close()
+    #         return
+    #     update_fields=[]
+    #     if name:
+    #         update_fields.append(f"name=" '{name}')
+            
+    #     if discription:
+    #         update_fields.append(f"discription= '{discription}'")
+    #     if price:
+    #         update_fields.append(f"price= '{price}'")
+    #     if quantity:
+    #         update_fields.append(f"quantity= '{quantity}'")
+                            
+    #     update_query=f"UPDATE products SET {','.join(update_fields)} where id=%s"
+    #     cur.execute(update_query,(product_id,))
+    #     conn .commit()
+    #     cur.close()
+    
+    # @staticmethod
+    def update_product(product_id, name=None, discription=None, price=None, quantity=None):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM products WHERE id = %s", (product_id,))
         product = cur.fetchone()
         if not product:
             print(">>>>> Product Not Found!")
             cur.close()
             return
-        update_fields=[]
+
+        update_fields = []
         if name:
-            update_fields.append(f"name=" '{name}')
-            
+            update_fields.append(f"name = '{name}'")
         if discription:
-            update_fields.append(f"discription= '{discription}'")
-        if price:
-            update_fields.append(f"price= '{price}'")
-        if quantity:
-            update_fields.append(f"quantity= '{quantity}'")
-                            
-        update_query=f"UPDATE products SET {','.join(update_fields)} where id=%s"
-        cur.execute(update_query,(product_id,))
-        conn .commit()
+            update_fields.append(f"discription = '{discription}'")
+        if price is not None:
+            update_fields.append(f"price = {price}")
+        if quantity is not None:
+            update_fields.append(f"quantity = {quantity}")
+
+        if update_fields:
+            update_query = f"UPDATE products SET {','.join(update_fields)} WHERE id = %s"
+            cur.execute(update_query, (product_id,))
+            conn.commit()
         cur.close()
     @staticmethod
     def delete_product(product_id):
@@ -75,10 +102,11 @@ class Products:
     @staticmethod
     def view_product_id(product_id):
         cur=conn.cursor()
-        cur.execute("SELECT * FROM products where id = %s",(product_id))
+        cur.execute("SELECT * FROM products where id = %s",(product_id,))
         products=cur.fetchall()
         cur.close()
         return products
+  
     @staticmethod      
     def product_menu():
         while True:

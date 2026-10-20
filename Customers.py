@@ -28,25 +28,28 @@ class Customers:
         cur.close()
         
     @staticmethod
-    def update_customer(customer_id,name=None,contact=None):
-            cur=conn.cursor()
-            cur.execute("SELECT * FROM customers where id= %s",(customer_id))
-            customer = cur.fetchone()
-            if not  customer:
-                print(">>>>> Customer Not Found!")
-                cur.close()
-                return
-            update_fields=[]
-            if name:
-                update_fields.append(f"name=" '{name}')
-                
-            if contact:
-                update_fields.append(f"contact= '{contact}'")
-                
-            update_query=f"UPDATE customers SET {','.join(update_fields)} where id=%s"
-            cur.execute(update_query,(customer_id))
-            conn .commit()
+    def update_customer(customer_id, name=None, contact=None):
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM customers WHERE id = %s", (customer_id,))
+        customer = cur.fetchone()
+        if not customer:
+            print(">>>>> Customer Not Found!")
             cur.close()
+            return
+
+        update_fields = []
+        if name:
+            update_fields.append(f"name = '{name}'")
+        if contact:
+            update_fields.append(f"contact = '{contact}'")
+
+        if update_fields:
+            update_query = f"UPDATE customers SET {','.join(update_fields)} WHERE id = %s"
+            cur.execute(update_query, (customer_id,))
+            conn.commit()
+        cur.close()
+            
+    
     @staticmethod
     def delete_customer(customer_id):
         cur = conn.cursor()
