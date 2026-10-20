@@ -32,31 +32,7 @@ class Products:
         cur.close()
         
     @staticmethod
-    # def update_product(product_id,name=None,discription=None,price=None,quantity=None):
-    #     cur=conn.cursor()
-    #     cur.execute("SELECT * FROM products where id= %s",(product_id,))
-    #     product = cur.fetchone()
-    #     if not product:
-    #         print(">>>>> Product Not Found!")
-    #         cur.close()
-    #         return
-    #     update_fields=[]
-    #     if name:
-    #         update_fields.append(f"name=" '{name}')
-            
-    #     if discription:
-    #         update_fields.append(f"discription= '{discription}'")
-    #     if price:
-    #         update_fields.append(f"price= '{price}'")
-    #     if quantity:
-    #         update_fields.append(f"quantity= '{quantity}'")
-                            
-    #     update_query=f"UPDATE products SET {','.join(update_fields)} where id=%s"
-    #     cur.execute(update_query,(product_id,))
-    #     conn .commit()
-    #     cur.close()
     
-    # @staticmethod
     def update_product(product_id, name=None, discription=None, price=None, quantity=None):
         cur = conn.cursor()
         cur.execute("SELECT * FROM products WHERE id = %s", (product_id,))
