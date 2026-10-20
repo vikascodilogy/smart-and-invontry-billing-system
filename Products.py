@@ -103,7 +103,7 @@ class Products:
     def view_product_id(product_id):
         cur=conn.cursor()
         cur.execute("SELECT * FROM products where id = %s",(product_id,))
-        products=cur.fetchall()
+        products=cur.fetchone()
         cur.close()
         return products
   

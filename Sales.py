@@ -37,27 +37,34 @@ class Sales:
         cur.close()
     @staticmethod
     
-    def update_sale(sale_id,customer_id=None,date=None,total_amount=None):
-        cur=conn.cursor()
-        cur.execute("SELECT * FROM sales where id= %s",(sale_id))
-        sale = cur.fetchone()
-        if not sale:
-            print(">>>>> sale Not Found!")
+    
+    def update_sale(sale_id, customer_id=None, date=None, total_amount=None):
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT * FROM sales WHERE id = %s", (sale_id,))
+            sale = cur.fetchone()
+            if not sale:
+                print(">>>>> Sale Not Found!")
+                cur.close()
+                return
+
+            update_fields = []
+            if customer_id is not None:
+                update_fields.append(f"customer_id = {customer_id}")
+            if date is not None:
+                update_fields.append(f"date = '{date}'")
+            if total_amount is not None:
+                update_fields.append(f"total_amount = {total_amount}")
+
+            if update_fields:
+                update_query = f"UPDATE sales SET {','.join(update_fields)} WHERE id = %s"
+                cur.execute(update_query, (sale_id,))
+                conn.commit()
+        except Exception as e:
+            conn.rollback() # Transaction abort hone se bachane ke liye
+            raise e
+        finally:
             cur.close()
-            return
-        update_fields=[]
-        if customer_id:
-            update_fields.append(f"name=" '{customer_id}')
-            
-        if date:
-            update_fields.append(f"date= '{date}'")
-        if total_amount:
-            update_fields.append(f"total_amount= '{total_amount}'")
-                            
-        update_query=f"UPDATE Sales SET {','.join(update_fields)} where id=%s"
-        cur.execute(update_query,(sale_id,))
-        conn .commit()
-        cur.close()
     @staticmethod
     
     def delete_sale(sale_id):
@@ -80,7 +87,7 @@ class Sales:
       
     def view_sale_id(sale_id):
         cur=conn.cursor()
-        cur.execute("SELECT * FROM sales where id = %s",(sale_id))
+        cur.execute("SELECT * FROM sales where id = %s",(sale_id,))
         sales=cur.fetchall()
         cur.close()
         return sales
@@ -88,7 +95,7 @@ class Sales:
     
     def generate_bill(sale_id):
         cur=conn.cursor()
-        cur.execute("SELECT * FROM Sales where id = %s",(sale_id))
+        cur.execute("SELECT * FROM Sales where id = %s",(sale_id,))
         sale_items=cur.fetchall()
         total_amount=0
         for item in sale_items:
@@ -118,12 +125,10 @@ class Sales:
     
     @staticmethod     
     def get_sales_by_customer(customer_id):
-        cur=conn.cursor()
-        cur.execute(
-        "SELECT * from sales where customer_id = %s",
-        (customer_id),
-        )
-        sales=cur.fetchall()
+        cur = conn.cursor()
+        # Single element tuple ke liye comma (customer_id,) zaroori hai
+        cur.execute("SELECT * FROM sales WHERE customer_id = %s", (customer_id,))
+        sales = cur.fetchall()
         cur.close()
         return sales
     
